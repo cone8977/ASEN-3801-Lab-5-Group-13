@@ -1,13 +1,13 @@
-% Contributors: Liz Thompson
+% Contributors: Cody Newton
 % Course number: ASEN 3801
 % File name: PlotAircraftSim
-% Created: 3/2/26
+% Created: 4/7/26
 
 function PlotAircraftSim(time,aircraft_state_array,control_input_array,fig, col,Task)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Inputs:   time = Time corresponding to the nth set of variables
 %           aircraft_state_array = 12 x n array of aircraft states
-%           control_input_array = 4 x n array of control inputs (Zc,Lc,Mc,Nc)
+%           control_input_array = 4 x n array of control inputs (Elevator (Deg),Alerion (Deg),Rudder (Deg),Throttle (0-1))
 %           fig = 6x1 vector of figure numbers to plot over
 %           col = string indicating the plotting option for each plot
 %           Task = what Task and part for figure labeling                 
@@ -81,14 +81,15 @@ print(sprintf('ASEN3801_L4_%sd',Task),'-dpng','-r300')
 figure(fig(5)); % Figure 5 for A/C Control Inputs
 hold on;
 sgtitle('Control Inputs')
-subplot(4,1,1); plot(time,Zc,col(3),LineWidth=1); 
-ylabel('Z-Force'); xlim([0,max(time)]); grid on;
-subplot(4,1,2); plot(time,Lc,col(4),LineWidth=1); 
-ylabel('X-Moment'); xlim([0,max(time)]); grid on;
-subplot(4,1,3); plot(time,Mc,col(5),LineWidth=1); 
-ylabel('Y-Moment'); xlim([0,max(time)]); grid on;
+subplot(3,1,1); plot(time,Zc,col(3),LineWidth=1); 
+ylabel('Elevator (Deg)'); xlim([0,max(time)]); grid on;
+subplot(3,1,2); plot(time,Lc,col(4),LineWidth=1); 
+ylabel('Alerion (Deg)'); xlim([0,max(time)]); grid on;
+subplot(3,1,3); plot(time,Mc,col(5),LineWidth=1); 
+ylabel('Rudder (Deg)'); xlim([0,max(time)]); grid on;
+print(sprintf('ASEN3801_L4_%se',Task),'-dpng','-r300')
 subplot(4,1,4); plot(time,Nc,col(6),LineWidth=1); 
-ylabel('Z-Moment'); xlim([0,max(time)]); xlabel('Time (s)'); grid on;
+ylabel('Throttle'); xlim([0,max(time)]); xlabel('Time (s)'); grid on;
 print(sprintf('ASEN3801_L4_%se',Task),'-dpng','-r300')
 %% Plotting 3D Trajectory 
 
