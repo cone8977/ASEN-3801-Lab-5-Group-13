@@ -1,4 +1,4 @@
-function [xdot,Controls] = AircraftEOM(time, aircraft_state, aircraft_surfaces, wind_inertial, aircraft_parameters)
+function [xdot,Controls] = AircraftEOMDoublet(time, aircraft_state, aircraft_surfaces, doublet_size,doublet_time, wind_inertial, aircraft_parameters)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Inputs:   time = simulation time
@@ -45,6 +45,14 @@ In.x = aircraft_parameters.Ix; In.y = aircraft_parameters.Iy; In.z = aircraft_pa
 In.xy = aircraft_parameters.Ixz;
 
 %% Calcaulte Control Force/Moments
+if time<=doublet_time
+aircraft_surfaces(1)=aircraft_surfaces(1)+doublet_size;
+elseif doublet_time < time<=(2.*doublet_time)
+aircraft_surfaces(1)=aircraft_surfaces(1)- 2.*doublet_size;
+else
+aircraft_surfaces(1)=aircraft_surfaces(1)+doublet_size;
+end
+
 [aero_forces, aero_moments] = AeroForcesAndMoments(aircraft_state, aircraft_surfaces, wind_inertial, density, aircraft_parameters);
 Controls=[];
 
@@ -80,18 +88,11 @@ W_dot = v_dot(3);
 
 %% P_dot, Q_dot, R_dot
 
-
 P_dot = Gamma.one.*State.p.*State.q -Gamma.two.*State.q.*State.r +Gamma.three.*aero_moments(1) +Gamma.four.*aero_moments(3);
 Q_dot = Gamma.five.*State.p.*State.r -Gamma.six.*(State.p.^2-State.r.^2) + 1./In.y .*aero_moments(2);
 R_dot = Gamma.seven .*State.p.*State.q - Gamma.one.*State.q.*State.r +Gamma.four .*aero_moments(1) + Gamma.eight.*aero_moments(3);
 
-
-
 %% Compilation
 xdot=[ X_dot; Y_dot; Z_dot; Phi_dot; Theta_dot; Psi_dot; U_dot; V_dot; W_dot; P_dot; Q_dot; R_dot];
-
-
-
-
 
 end

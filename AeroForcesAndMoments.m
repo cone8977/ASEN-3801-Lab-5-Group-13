@@ -16,7 +16,27 @@ function [aero_forces, aero_moments] = AeroForcesAndMoments(aircraft_state, airc
 %%% redefine states and inputs for ease of use
 ap = aircraft_parameters;
 
-wind_body = TransformFromInertialToBody(wind_inertial, aircraft_state(4:6,1));
+State.x=aircraft_state(1); State.y=aircraft_state(2); State.z=aircraft_state(3);             % Position
+State.phi=aircraft_state(4); State.theta=aircraft_state(5); State.psi=aircraft_state(6);     % Attitude
+State.u=aircraft_state(7); State.v=aircraft_state(8); State.w=aircraft_state(9);             % Velocity
+State.p=aircraft_state(10); State.q=aircraft_state(11); State.r=aircraft_state(12); 
+
+
+Trig.cpsi = cos(State.psi); Trig.spsi = sin(State.psi);
+Trig.tpsi = tan(State.psi);
+
+% Calculate Trig values of Theta
+Trig.ctheta = cos(State.theta); Trig.stheta = sin(State.theta);
+Trig.ttheta = tan(State.theta);
+
+% Calculate Trig values of Phi
+Trig.cphi = cos(State.phi); Trig.sphi = sin(State.phi);
+Trig.tphi = tan(State.phi);
+
+
+wind_body = [Trig.ctheta.*Trig.cpsi, (Trig.sphi.*Trig.stheta.*Trig.cpsi)-(Trig.cphi.*Trig.spsi), (Trig.cphi.*Trig.stheta.*Trig.cpsi)-(Trig.sphi.*Trig.spsi); ...
+                     Trig.ctheta.*Trig.spsi, (Trig.sphi.*Trig.stheta.*Trig.spsi)+(Trig.cphi.*Trig.cpsi), (Trig.cphi.*Trig.stheta.*Trig.spsi)-(Trig.sphi.*Trig.cpsi); ...
+                     -Trig.stheta, Trig.ctheta.*Trig.sphi, Trig.ctheta.*Trig.cphi] *wind_inertial;
 air_rel_vel_body = aircraft_state(7:9,1) - wind_body;
 
 [wind_angles] = WindAnglesFromVelocityBody(air_rel_vel_body);
